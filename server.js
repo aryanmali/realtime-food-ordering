@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const flash = require('express-flash')
 const MongoDbStore = require('connect-mongo')(session)
+const passport = require('passport')
 const PORT = process.env.PORT || 3300;
 
 //Database Connection
@@ -19,6 +20,10 @@ connection.once('open', () => {
 }).catch(err => {
     console.log('Connection failed...')
 });
+
+//Passport Configuration
+app.use(passport.initialize())
+app.use(passport.session())
 
 //Session Store
 let mongoStore = new MongoDbStore({
@@ -38,6 +43,7 @@ app.use(flash())
 
 //Assets
 app.use(express.static('public'))
+app.use(express.urlencoded({ extended: false}))
 app.use(express.json())
 
 //Global Middleware
