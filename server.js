@@ -21,10 +21,6 @@ connection.once('open', () => {
     console.log('Connection failed...')
 });
 
-//Passport Configuration
-app.use(passport.initialize())
-app.use(passport.session())
-
 //Session Store
 let mongoStore = new MongoDbStore({
                 mongooseConnection: connection,
@@ -41,6 +37,12 @@ app.use(session({
 }))
 app.use(flash())
 
+//Passport Configuration
+const passportInit = require('./app/config/passport')
+passportInit(passport)
+app.use(passport.initialize())
+app.use(passport.session())
+
 //Assets
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: false}))
@@ -49,6 +51,7 @@ app.use(express.json())
 //Global Middleware
 app.use((req,res,next) => {
     res.locals.session = req.session
+    res.locals.user = req.user
     next()
 })
 
